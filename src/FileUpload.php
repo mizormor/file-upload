@@ -3,7 +3,6 @@
 namespace Mizormor\FileUpload;
 
 use App\Models\Tour;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -43,24 +42,22 @@ class FileUpload extends Field
 
     public function fill(NovaRequest $request, $model): void
     {
-        if ($request->hasFile('tour_image')) {
-            $file = $request->file('tour_image');
-            $fileName = $file->getClientOriginalName();
-            $tour = Tour::find($this->resource->id);
-            $filePath = $file->storeAs("tours/$tour?->id", $fileName);
+        if ($request->hasFile('tour_images')) {
+            foreach ($request->file('tour_images') as $file) {
+                $fileName = $file->getClientOriginalName();
+                $tour = Tour::find($this->resource->id);
+                $filePath = $file->storeAs("tours/$tour?->id", $fileName);
 
-            $url = Storage::url((string) $filePath);
+                $url = Storage::url((string) $filePath);
 
-            /**
-             * @var Tour $tour
-             */
-            $tour->uploads()->create([
-                'url' => $url,
-                'type' => 'tour_image',
-            ]);
-        } else {
-//            $model->{$attribute} = null;
-            Log::error($request->input('name'));
+                /**
+                 * @var Tour $tour
+                 */
+                $tour->uploads()->create([
+                    'url' => $url,
+                    'type' => 'tour_image',
+                ]);
+            }
         }
     }
 }
