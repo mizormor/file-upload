@@ -33,11 +33,12 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mixins: [laravel_nova__WEBPACK_IMPORTED_MODULE_0__.FormField, laravel_nova__WEBPACK_IMPORTED_MODULE_0__.HandlesValidationErrors],
-  props: ['resourceName', 'resourceId', 'field'],
+  props: ['resourceName', 'resourceId', 'field', 'maxFileSize'],
   data: function data() {
     return {
-      imagePreviewUrl: null,
-      imageFile: null
+      imagePreviewUrls: [],
+      imageFiles: [],
+      errorMessage: null
     };
   },
   methods: {
@@ -47,68 +48,36 @@ __webpack_require__.r(__webpack_exports__);
     setInitialValue: function setInitialValue() {
       this.value = this.field.value || '';
     },
-    // previewImage(event) {
-    //     const file = event.target.files[0];
-    //     const reader = new FileReader();
-    //
-    //     reader.onload = () => {
-    //         this.imagePreviewUrl = reader.result;
-    //     };
-    //
-    //     if (file) {
-    //         reader.readAsDataURL(file);
-    //     }
-    // },
     previewImage: function previewImage(event) {
       var _this = this;
-      var file = event.target.files[0];
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        _this.imagePreviewUrl = e.target.result;
-        _this.$emit('input', file);
-        _this.imageFile = file;
-        _this.errorMessage = null;
-        // console.log(this.imageFile);
-      };
-
-      if (this.maxFileSize && file.size / 1024 > this.maxFileSize) {
-        this.errorMessage = "File size must be less than ".concat(this.maxFileSize, " KB");
-        this.imagePreviewUrl = null;
-      } else {
-        reader.readAsDataURL(file);
-      }
-    },
-    uploadImage: function uploadImage() {
-      // Replace the URL with your own server endpoint
-      var url = 'https://example.com/upload';
-
-      // Create a new FormData object and append the image file to it
-      var formData = new FormData();
-      formData.append('tour_image', this.$refs.fileInput.files[0]);
-      console.log(this.$refs.fileInput);
-
-      // Make a POST request to the server with the form data
-      fetch(url, {
-        method: 'POST',
-        body: formData
-      }).then(function (response) {
-        // Handle the response from the server
-        console.log('Response:', response);
-      })["catch"](function (error) {
-        // Handle any errors that occur during the request
-        console.error('Error:', error);
+      var files = event.target.files;
+      Array.from(files).forEach(function (file) {
+        console.log(_this.maxFileSize);
+        console.log(file.size);
+        if (_this.maxFileSize && file.size / 1024 > _this.maxFileSize) {
+          _this.errorMessage = "File size must be less than ".concat(_this.maxFileSize, " KB");
+          return;
+        }
+        var imageUrl = URL.createObjectURL(file);
+        _this.imagePreviewUrls.push(imageUrl);
+        _this.imageFiles.push(file);
       });
     },
     /**
      * Fill the given FormData object with the field's internal value.
      */
     fill: function fill(formData) {
-      formData.append(this.field.attribute, this.imageFile);
-      console.log(formData.get('tour_image'));
+      var _this2 = this;
+      this.imageFiles.forEach(function (file, index) {
+        formData.append("".concat(_this2.field.attribute, "[").concat(index, "]"), file);
+      });
     },
-    clearImage: function clearImage() {
-      this.imagePreviewUrl = null;
-      this.$refs.fileInput.value = '';
+    clearImage: function clearImage(index) {
+      this.imagePreviewUrls.splice(index, 1);
+      this.imageFiles.splice(index, 1);
+    },
+    chooseFile: function chooseFile() {
+      this.$refs.fileInput.click();
     }
   }
 });
@@ -176,19 +145,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 
 var _hoisted_1 = {
-  "class": "relative"
+  "class": "mb-5 flex flex-wrap space-x-2 space-y-2"
 };
 var _hoisted_2 = ["src"];
-var _hoisted_3 = ["placeholder"];
+var _hoisted_3 = ["onClick"];
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24",
-  "class": "w-4 h-4 fill-current"
+  "class": "w-2 h-2 fill-current"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
   d: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
 })], -1 /* HOISTED */);
 var _hoisted_5 = [_hoisted_4];
-var _hoisted_6 = {
+var _hoisted_6 = ["placeholder"];
+var _hoisted_7 = {
   key: 0,
   "class": "my-2 text-danger"
 };
@@ -201,27 +171,39 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "full-width-content": _ctx.fullWidthContent
   }, {
     field: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [$data.imagePreviewUrl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
-        key: 0,
-        src: $data.imagePreviewUrl,
-        "class": "w-400 mb-5",
-        width: "200",
-        alt: "tour image"
-      }, null, 8 /* PROPS */, _hoisted_2)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.imagePreviewUrls, function (image, index) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+          "class": "relative flex-shrink-0",
+          key: index,
+          style: {
+            "width": "170px",
+            "height": "180px"
+          }
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+          src: image,
+          "class": "w-full h-full object-cover",
+          alt: "tour image"
+        }, null, 8 /* PROPS */, _hoisted_2), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+          onClick: function onClick($event) {
+            return $options.clearImage(index);
+          },
+          "class": "absolute top-0 right-0 m-1 p-1 text-white bg-red-500 rounded-full focus:outline-none"
+        }, _hoisted_5, 8 /* PROPS */, _hoisted_3)]);
+      }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "file",
         onChange: _cache[0] || (_cache[0] = function () {
           return $options.previewImage && $options.previewImage.apply($options, arguments);
         }),
         ref: "fileInput",
-        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["opacity-0 w-0 h-0", _ctx.errorClasses]),
-        placeholder: $props.field.name
-      }, null, 42 /* CLASS, PROPS, HYDRATE_EVENTS */, _hoisted_3), $data.imagePreviewUrl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
-        key: 1,
+        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["opacity-0 w-0 h-0 hidden", _ctx.errorClasses]),
+        placeholder: $props.field.name,
+        multiple: ""
+      }, null, 42 /* CLASS, PROPS, HYDRATE_EVENTS */, _hoisted_6), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        "class": "bg-primary-500 text-white py-2 px-4 rounded text-sm font-bold",
         onClick: _cache[1] || (_cache[1] = function () {
-          return $options.clearImage && $options.clearImage.apply($options, arguments);
-        }),
-        "class": "absolute top-0 left-0 m-2 p-2 text-white bg-red-500 rounded-full focus:outline-none"
-      }, _hoisted_5)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), _ctx.hasError ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.firstError), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+          return $options.chooseFile && $options.chooseFile.apply($options, arguments);
+        })
+      }, "Choose File")])]), $data.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errorMessage), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["field", "errors", "show-help-text", "full-width-content"]);

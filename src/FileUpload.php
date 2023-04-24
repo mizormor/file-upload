@@ -22,12 +22,11 @@ class FileUpload extends Field
     /**
      * Set the maximum image size (in KB).
      *
-     * @param  int  $size
      * @return $this
      */
-    public function maxFileSize($size = 2048)
+    public function maxFileSize(int $value = 48)
     {
-        return $this->withMeta(['maxFileSize' => $size]);
+        return $this->withMeta(['maxFileSize' => $value]);
     }
 
     /**
