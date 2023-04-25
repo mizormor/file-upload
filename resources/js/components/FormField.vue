@@ -44,7 +44,7 @@ import {FormField, HandlesValidationErrors} from 'laravel-nova'
 export default {
     mixins: [FormField, HandlesValidationErrors],
 
-    props: ['resourceName', 'resourceId', 'field', 'maxFileSize'],
+    props: ['resourceName', 'resourceId', 'field'],
 
     data() {
         return {

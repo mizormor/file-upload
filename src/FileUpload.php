@@ -60,4 +60,12 @@ class FileUpload extends Field
             }
         }
     }
+
+    public function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute): void
+    {
+        if ($request->exists('tour_images')) {
+            info($attribute);
+            $model->tour_images = $model->getImages();
+        }
+    }
 }

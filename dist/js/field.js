@@ -12,8 +12,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+var _templateObject;
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['index', 'resource', 'resourceName', 'resourceId', 'field']
+  props: ['index', 'resource', 'resourceName', 'resourceId', 'field'],
+  data: function data() {
+    return {
+      images: []
+    };
+  },
+  methods: {
+    fetchImages: function fetchImages() {
+      var _this = this;
+      Nova.request(_templateObject || (_templateObject = _taggedTemplateLiteral(["/nova-api/mizormor/file-upload/uploads/", "/", ""])), this.resourceName, this.resourceId) // this is the line that is causing the error
+      .then(function (response) {
+        _this.images = response;
+      })["catch"](function (error) {
+        console.error(error);
+      });
+    },
+    getImageUrl: function getImageUrl(image) {
+      return "/nova-api/mizormor/file-upload/uploads/".concat(resourceName, "/").concat(resourceId, "/").concat(image);
+    }
+  }
 });
 
 /***/ }),
@@ -33,7 +54,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mixins: [laravel_nova__WEBPACK_IMPORTED_MODULE_0__.FormField, laravel_nova__WEBPACK_IMPORTED_MODULE_0__.HandlesValidationErrors],
-  props: ['resourceName', 'resourceId', 'field', 'maxFileSize'],
+  props: ['resourceName', 'resourceId', 'field'],
   data: function data() {
     return {
       imagePreviewUrls: [],
@@ -120,12 +141,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "vue");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 
+var _hoisted_1 = {
+  "class": "grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+};
+var _hoisted_2 = ["src"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_PanelItem = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("PanelItem");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_PanelItem, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PanelItem, {
     index: $props.index,
     field: $props.field
-  }, null, 8 /* PROPS */, ["index", "field"]);
+  }, null, 8 /* PROPS */, ["index", "field"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.images, function (image, index) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+      key: index,
+      "class": "relative flex-shrink-0"
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+      src: $options.getImageUrl(image),
+      "class": "w-full h-full object-cover",
+      alt: "tour image"
+    }, null, 8 /* PROPS */, _hoisted_2)]);
+  }), 128 /* KEYED_FRAGMENT */))])], 64 /* STABLE_FRAGMENT */);
 }
 
 /***/ }),
