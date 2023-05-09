@@ -9,8 +9,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class FileUpload extends Field
 {
-    public $uploadUrl = 'https://example.com/api/uploads';
-
     /**
      * The field's component.
      *
